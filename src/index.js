@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
 import { join } from "node:path";
 import { hostname } from "node:os";
+import { existsSync } from "node:fs";
 import wisp from "wisp-server-node";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
@@ -80,12 +81,14 @@ fastify.get("/ready", async (req, res) => {
 
 // Serve custom UV config if it exists, otherwise use default
 fastify.get("/uv/uv.config.js", (req, res) => {
-	// Try to serve custom config from /public first
-	const customConfigPath = join(process.cwd(), "public");
-	return res.sendFile("uv/uv.config.js", customConfigPath).catch(() => {
-		// Fallback to default config from ultraviolet-static
+	const customConfigPath = join(process.cwd(), "public", "uv", "uv.config.js");
+
+	// Check if custom config exists, otherwise serve default
+	if (existsSync(customConfigPath)) {
+		return res.sendFile("uv/uv.config.js", join(process.cwd(), "public"));
+	} else {
 		return res.sendFile("uv/uv.config.js", publicPath);
-	});
+	}
 });
 
 fastify.register(fastifyStatic, {
