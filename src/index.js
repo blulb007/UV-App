@@ -29,10 +29,15 @@ const fastify = Fastify({
 	serverFactory: (handler) => {
 		return createServer()
 			.on("request", (req, res) => {
-				// Enhanced CORS headers for better compatibility
-				res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-				res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+				// More permissive CORS headers for proxy compatibility
+				// Only set COOP/COEP for specific paths that need SharedArrayBuffer
+				if (req.url.startsWith("/uv/") || req.url.startsWith("/epoxy/")) {
+					res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+					res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+				}
 				res.setHeader("X-Content-Type-Options", "nosniff");
+				// Allow service workers to control all pages
+				res.setHeader("Service-Worker-Allowed", "/");
 				handler(req, res);
 			})
 			.on("upgrade", (req, socket, head) => {
@@ -73,8 +78,14 @@ fastify.get("/ready", async (req, res) => {
 	return { status: "ready" };
 });
 
+// Serve custom UV config if it exists, otherwise use default
 fastify.get("/uv/uv.config.js", (req, res) => {
-	return res.sendFile("uv/uv.config.js", publicPath);
+	// Try to serve custom config from /public first
+	const customConfigPath = join(process.cwd(), "public");
+	return res.sendFile("uv/uv.config.js", customConfigPath).catch(() => {
+		// Fallback to default config from ultraviolet-static
+		return res.sendFile("uv/uv.config.js", publicPath);
+	});
 });
 
 fastify.register(fastifyStatic, {

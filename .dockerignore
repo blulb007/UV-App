@@ -20,8 +20,7 @@ replit.nix
 .prettierignore
 eslint.config.mjs
 
-# Documentation
-README.md
+# Documentation (keeping deployment guides)
 LICENSE
 
 # CI/CD
