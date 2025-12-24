@@ -1,12 +1,28 @@
+# Git
+.git
+.gitignore
+
+# Docker
 .dockerignore
 Dockerfile
-.eslintignore
-.eslintrc.json
-.gitignore
-.prettierignore
-.prettierrc.json
+docker-compose.yml
+
+# Node
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Development
 .replit
-LICENSE
-README.md
 replit.nix
+.prettierrc.js
+.prettierignore
+eslint.config.mjs
+
+# Documentation
+README.md
+LICENSE
+
+# CI/CD
 .github/
