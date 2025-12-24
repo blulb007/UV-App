@@ -9,9 +9,13 @@
 	},
 	"scripts": {
 		"start": "node src/index.js",
+		"dev": "NODE_ENV=development node src/index.js",
 		"format": "prettier --config .prettierrc.js --write .",
 		"lint": "eslint ./src/",
-		"lint:fix": "eslint ./src/ --fix"
+		"lint:fix": "eslint ./src/ --fix",
+		"docker:build": "docker build -t uv-app .",
+		"docker:test": "./docker-build-test.sh",
+		"docker:run": "docker run --rm -p 8080:8080 uv-app"
 	},
 	"keywords": [
 		"proxy"
@@ -30,6 +34,7 @@
 	},
 	"devDependencies": {
 		"eslint": "^9.13.0",
+		"pino-pretty": "^11.0.0",
 		"prettier": "^3.3.3"
 	},
 	"packageManager": "pnpm@9.12.2"
